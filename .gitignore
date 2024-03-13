@@ -1,0 +1,39 @@
+# Dependency directories
+node_modules/
+
+# dotenv environment variable files
+.env
+.env.*.local
+
+# Expo & React Native
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# iOS specific
+ios/Pods/
+ios/*.xcworkspace
+ios/*.xcodeproj
+ios/build/
+ios/*.plist
+
+# Android specific
+android/.gradle
+android/build/
+android/captures/
+*.keystore
+
+# Configurations
+config.js
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
