@@ -132,7 +132,7 @@ const RegistrationScreen = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
       <View style={styles.welcomeContainer}>
-        <Text style={styles.welcome}>Find a Gym Rats</Text>
+        <Text style={styles.welcome}>find your trybe</Text>
         {showError && (
           <View style={styles.errorContainer}>
              <Text style={styles.errorText}>{errorMessage}</Text>
@@ -225,16 +225,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFEEC4',
+    backgroundColor: 'teal',
+    paddingHorizontal: 20,
     
   },
   welcomeContainer: {
     flex: 0.2,
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'pink',
     justifyContent: 'flex-start',
-    borderTopLeftRadius: 60, 
-    borderTopRightRadius: 60, 
+
     
   },
   welcome: {
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   allContainer: {
     flex: 0.8,
-    backgroundColor: 'white',
+    backgroundColor: 'azure',
     alignItems: 'center',
     
   },

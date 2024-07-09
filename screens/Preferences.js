@@ -312,7 +312,7 @@ const Preferences = ({navigation}) => {
           <View style={styles.bottomContainer}>
            <View style={styles.nextButtonContainer}>
              <TouchableOpacity onPress={updatePreferences} style={styles.nextButton}>
-               <Text style={styles.nextButtonText}>Done</Text>
+               <Text style={styles.nextButtonText}>Update</Text>
              </TouchableOpacity>
            </View>
           </View>
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   nextButtonContainer: {
     width: '80%',
     height: 56,
-    backgroundColor: '#3B9678',
+    backgroundColor: '#FFBB56',
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -360,7 +360,9 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 20,
     fontWeight: '600',
-    color: 'white',
+    color: '#202244',
+    fontFamily: 'Urbanist-VariableFont',
+
   },
   listContainer: {
     padding: 10,

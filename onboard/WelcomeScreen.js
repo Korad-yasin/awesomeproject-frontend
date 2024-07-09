@@ -36,7 +36,7 @@ const WelcomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
          <View style={styles.welcomeContainer}>
-           <Text style={styles.welcomeText}>Gym Rats</Text>
+           <Text style={styles.welcomeText}>trybe</Text>
            <View style={styles.icon}>
             {isLifted ? <Gym2 /> : <Gym /> }
            </View>

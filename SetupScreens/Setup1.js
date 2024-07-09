@@ -5,9 +5,11 @@ import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
 import axios from 'axios'; // Import axios to make HTTP requests
 import { API_URL } from '../config';
+import Header from '../reusable/header';
+import NextButton from '../reusable/button';
 
 
-const Setup1Screen = ({ navigation }) => {
+const Setup1 = ({ navigation }) => {
   const { userId } = useContext(SetupContext); // Add this line
   const [birthday, setBirthday] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -78,44 +80,56 @@ const Setup1Screen = ({ navigation }) => {
 
     navigation.navigate('Setup2');
   };
+
+  const skip = async () => {
+    // Navigate to the next screen
+    navigation.navigate('Setup2');
+  };
   
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <Header
+          onBackPress={() => navigation.goBack()}
+          onSkipPress={skip}
+          />
+        </View>
       {showMessage && (
         <Text style={styles.continueText}>
           Continue setting up your Gym Rats profile.
         </Text>
       )}
-      <View style={styles.labelContainer}>
+      <View style={styles.topContainer}>
         <Text style={styles.label}>Your age?</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={togglePicker} style={styles.datePicker}>
-          <Text style={styles.dateText}>{birthday.toLocaleDateString()}</Text>
-        </TouchableOpacity>
-        {showPicker && (
-          <Modal transparent={true}>
-          <View style={styles.modalContainer}>
-            <View style={styles.pickerContainer}>
-              <DateTimePicker
-                mode='date'
-                display='spinner'
-                value={tempDate}
-                onChange={onDateChange}
-              />
-              <Button title="Done" onPress={confirmDate} />
-            </View>
+        <View style={styles.inputContainer}>
+           <TouchableOpacity onPress={togglePicker} style={styles.datePicker}>
+             <Text style={styles.dateText}>{birthday.toLocaleDateString()}</Text>
+           </TouchableOpacity>
+           {showPicker && (
+              <Modal transparent={true}>
+              <View style={styles.modalContainer}>
+              <View style={styles.pickerContainer}>
+                 <DateTimePicker
+                   mode='date'
+                   display='spinner'
+                   value={tempDate}
+                   onChange={onDateChange}
+                 />
+                <Button title="Done" onPress={confirmDate} />
+             </View>
           </View>
         </Modal>
       )}
     </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={next} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
     </View>
+      
+    <View style={styles.bottomContainer}>
+      <NextButton
+      onButtonPress={next}
+      />
+    </View>
+   </View>
 
     </SafeAreaView>
   );
@@ -131,12 +145,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
     paddingHorizontal: 20, // 20 padding on the sides
   },
-  continueText: {
+  header: {
+    backgroundColor: 'white',
+  },
+  topContainer: {
+    flex: 5,
+    backgroundColor: 'white',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  continueText: { // need to get rid of this and put it in a reusable file since its used across many different pages
     marginBottom: 20,
     marginTop: 10,
     fontSize: 16,
@@ -148,27 +169,21 @@ const styles = StyleSheet.create({
     top: height * 0.02,
   },
   inputContainer: {
-    width: '80%',
-    height: 40,
+    width: '90%',
+    height: 50,
     justifyContent: 'center',
-    borderColor: '#1E232C',
-    borderWidth: 0.5,
-    borderRadius: 8,
-    position: 'absolute',
-    top: height * 0.15,
+    borderColor: '#bbb',
+    borderWidth: 1,
+    borderRadius: 1,
+    borderRadius: 10,
+    marginTop: 20,
   },
-  labelContainer: {
-    position: 'absolute',
-    top: height * 0.08,
-    justifyContent: 'center',
-    backgroundColor: 'white',
-},
   label: {
-    fontFamily: 'Urbanist-VariableFont',
+    marginTop: 20,
     color: 'black',
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center',
+    right: '30%',
   },
   dateText: {
     textAlign: 'center',
@@ -177,33 +192,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end', // Align to the bottom of the screen
     alignItems: 'center', // Center horizontally
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background when the modal Container pops up!
   },
   pickerContainer: {
     width: '100%', // Full width
     backgroundColor: 'white',
-    padding: 20,
+    padding: 30,
     borderRadius: 10,
-    
   },  
-  buttonContainer: {
-    width: '80%',
-    marginTop: height * 0.5,
-  },
-  button: {
-    height: 55,
-    backgroundColor: '#FFBB56',
-    borderRadius: 8,
+  bottomContainer: {
+    flex: 1,
+    backgroundColor: 'white',
     justifyContent: 'center',
-    alignItems: 'center',
+
   },
-  buttonText: {
-    textAlign: 'center',
-    color: '#202244',
-    fontSize: 18,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-  },
+  
 });
 
-export default Setup1Screen;
+export default Setup1;

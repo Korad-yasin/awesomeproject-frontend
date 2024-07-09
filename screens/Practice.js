@@ -1,6 +1,6 @@
 // stand in code new screens
 import { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Pressable, Dimensions, ActivityIndicator, TouchableOpacity, Flatlist } from 'react-native';
 import * as Font from 'expo-font';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -18,17 +18,10 @@ const Practice = () => {
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false); 
     const [selected, setSelected] = useState([]);
+    const [collegesData, setCollegesData] = useState([]);
 
-    const data = [
-        { label: 'Smith College', value: '1' },
-        { label: 'Amherst', value: '2' },
-        { label: 'Brown University', value: '3' },
-        { label: 'Tufts', value: '4' },
-        { label: 'NewYork University', value: '5' },
-        { label: 'Mount Holoyke', value: '6' },
-        { label: 'Hampshire College', value: '7' },
-        { label: 'Harvard', value: '8' },
-    ];
+
+    
 
     useEffect(() => {
         const loadFont = async () => {
@@ -38,6 +31,22 @@ const Practice = () => {
           });
           setFontLoaded(true);
         };
+
+        function capitalizeWords(str) {
+          return str.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+        }
+
+        const fetchColleges = async () => {
+          try {
+            const response = await axios.get(`${API_URL}/api/colleges?state=MA`); 
+            setCollegesData(response.data.map(college => ({ label: capitalizeWords(college.name), value: college.name })));
+          } catch (error) {
+             console.error("Failed to fetch colleges:", error);
+          }
+        };
+      
+        fetchColleges();
+
         loadFont();
       }, []);
     
@@ -57,7 +66,7 @@ const Practice = () => {
         return (
           <View style={styles.selectedStyle}>
             <Text style={styles.textSelectedStyle}>{item.label}</Text>
-            <TouchableOpacity onPress={onRemove} style={{ padding: 4 }}>
+            <TouchableOpacity onPress={onRemove} style={{ padding: 4, }}>
               <AntDesign color="black" name="delete" size={17} />
             </TouchableOpacity>
           </View>
@@ -79,7 +88,7 @@ const Practice = () => {
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       inputSearchStyle={styles.inputSearchStyle}
-                      data={data}
+                      data={collegesData}
                       search
                       maxHeight={300}
                       labelField="label"
@@ -94,6 +103,8 @@ const Practice = () => {
                         setIsFocus(false);
                       }}
                     />
+                    </View>
+                    <View style={styles.middleContainer}>
                     <View style={styles.textContainer2}>
                         <Text style={styles.text2}>Want to see gym rats from other schools ? Select as many as you want.</Text>
                     </View>
@@ -103,7 +114,7 @@ const Practice = () => {
                       selectedTextStyle={styles.selectedTextStyle}
                       inputSearchStyle={styles.inputSearchStyle}
                       iconStyle={styles.iconStyle}
-                      data={data}
+                      data={collegesData}
                       search
                       maxHeight={300}
                       labelField="label"
@@ -118,8 +129,9 @@ const Practice = () => {
                         <SelectedItem item={item} onRemove={() => unSelect(item)} />
                       )}  
                     />
+
+                    </View>
                     
-                </View>
                 <View style={styles.bottomContainer}>
                  <Pressable style={styles.buttonContainer}>
                      <View style={styles.nextButton}>
@@ -148,7 +160,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     }, 
     topContainer: {
-        flex: 0.8,
+        flex: 0.2,
+        backgroundColor: 'white',
+        padding: 20,
+
+    },
+    middleContainer: {
+      flex: 0.6,
         backgroundColor: 'white',
         padding: 20,
 
@@ -169,7 +187,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         padding: 10,
         backgroundColor: 'yellow',
-        top: height * 0.15,
+  
     },
     text2: {
         fontSize: 16,
@@ -206,8 +224,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 8,
         marginTop: 15,
-        top: height * 0.15,
-        marginBottom: 150,
+
     },
     selectedStyle: {    // oval containers for selected schools
         flexDirection: 'row',
@@ -261,7 +278,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',
-        bottom: height * 0.1,
+    
   
        
     },

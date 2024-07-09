@@ -17,20 +17,27 @@ import Preferences from './screens/Preferences';
 import ChangePictures from './screens/ChangePictures';
 import Practice from './screens/Practice';
 
-import RegistrationScreen from './screens/RegistrationScreen';
-import LoginScreen from './screens/LoginScreen';
-import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import RegistrationScreen from './onboard/RegistrationScreen';
+import LoginScreen from './onboard/LoginScreen';
+import ResetPasswordScreen from './onboard/ResetPasswordScreen';
 
 
-import WelcomeScreen from './screens/WelcomeScreen';
+import WelcomeScreen from './onboard/WelcomeScreen';
 
 // Import the setup screens
-import Setup1Screen from './screens/Setup1Screen';
-import Setup2Screen from './screens/Setup2Screen';
-import Setup3Screen from './screens/Setup3Screen';
-import Setup4Screen from './screens/Setup4Screen';
-import Setup5Screen from './screens/Setup5Screen';
+import Setup1 from './SetupScreens/Setup1';
 
+import Setup2 from './SetupScreens/Setup2';
+import Setup2clone2 from './SetupScreens/Setup2clone2';
+import Setup2x2 from './SetupScreens/Setup2x2';
+import Setup2x3 from './SetupScreens/Setup2x3';
+import Setup2x4 from './SetupScreens/Setup2x4';
+import Setup3 from './SetupScreens/Setup3';
+import Setup4 from './SetupScreens/Setup4';
+import Setup5 from './SetupScreens/Setup5';
+
+
+// import reusable screens
 
 const Stack = createStackNavigator();
 
@@ -41,14 +48,10 @@ const App = () => {
       <SetupProvider>
          <NavigationContainer>
             <Stack.Navigator
-              initialRouteName=""
+              initialRouteName="Setup1"
               screenOptions={{
                 headerBackTitleVisible: false, // Hide the back button text
-                headerBackImage: () => (
-                  <View style={{ paddingLeft: 10 }}>
-                    <Icon name="arrow-back" size={25} color="#202244" />
-                  </View>
-                ),
+                headerBackImage: () => null,
                 headerStyle: {
                   backgroundColor: '#FFEEC4', // Example background color
                 },
@@ -80,12 +83,16 @@ const App = () => {
               <Stack.Screen name="Practice" component={Practice}  />
               <Stack.Screen name="Registration" component={RegistrationScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} /> 
-              <Stack.Screen name="Setup1" component={Setup1Screen} options={{ title: '' }}/>
-              <Stack.Screen name="Setup2" component={Setup2Screen} options={{ title: '' }} />
-              <Stack.Screen name="Setup3" component={Setup3Screen} options={{ title: '' }} />
-              <Stack.Screen name="Setup4" component={Setup4Screen} options={{ title: '' }} />
-              <Stack.Screen name="Setup5" component={Setup5Screen} options={{ title: '' }} />
+              <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+              <Stack.Screen name="Setup1" component={Setup1} />
+              <Stack.Screen name="Setup2" component={Setup2}  />
+              <Stack.Screen name="Setup2clone2" component={Setup2clone2}  />
+              <Stack.Screen name="Setup2x2" component={Setup2x2} />
+              <Stack.Screen name="Setup2x3" component={Setup2x3} />
+              <Stack.Screen name="Setup2x4" component={Setup2x4} />
+              <Stack.Screen name="Setup3" component={Setup3} />
+              <Stack.Screen name="Setup4" component={Setup4}  />
+              <Stack.Screen name="Setup5" component={Setup5} />
            </Stack.Navigator>
          </NavigationContainer>
        </SetupProvider>

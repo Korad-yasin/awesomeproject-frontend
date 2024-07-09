@@ -1,4 +1,5 @@
 // components/UserDetails.js
+// I don't know how this file would be useful in the backend later on and if it would be changed?
 
 import React from 'react';
 import { View, Text } from 'react-native';

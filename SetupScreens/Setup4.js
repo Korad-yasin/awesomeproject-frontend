@@ -5,13 +5,15 @@ import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
 import axios from 'axios'; // Import axios
 import { API_URL } from '../config';
+import Header from '../reusable/header';
+import NextButton from '../reusable/button';
 
 
-const Setup4Screen = ({ navigation }) => {
+const Setup4 = ({ navigation }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const { userId} = useContext(SetupContext);
   const { setupData, setSetupData } = useContext(SetupContext);
-  const [age_preference, setAge_preference] = useState([10, 100]); // Age is now an array
+  const [age_preference, setAge_preference] = useState([17, 100]); // Age is now an array
   
   const { isReturningUser, setIsReturningUser } = useContext(SetupContext);
   const [showMessage, setShowMessage] = useState(isReturningUser);
@@ -36,7 +38,7 @@ const Setup4Screen = ({ navigation }) => {
   }, []);
 
   const next = async () => {
-    if (age_preference[0] < 15 || age_preference[1] > 100) {
+    if (age_preference[0] < 17 || age_preference[1] > 100) {
       alert('Please enter a valid age.');
       return;
     }
@@ -60,40 +62,49 @@ const Setup4Screen = ({ navigation }) => {
     navigation.navigate('Setup5');
   };
 
+  const skip = async () => {
+    // Navigate to the next screen
+    navigation.navigate('Setup5');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-      {showMessage && (
-        <Text style={styles.continueText}>
-          Continue setting up your Gym Rats profile.
-        </Text>
-      )}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Age Preference</Text>
-      </View>
-      <View style={styles.sliderContainer}>
-        <MultiSlider
-        values={age_preference}
-        sliderLength={280}
-        onValuesChange={setAge_preference}
-        min={15}
-        max={100}
-        step={1}
-        allowOverlap={false}
-        minMarkerOverlapDistance={10}
-        selectedStyle={{backgroundColor: '#FF775C'}}
-        unselectedStyle={{backgroundColor: '#DADADA'}}
-        markerStyle={{backgroundColor: '#FF775C'}}
-        />
-      </View>
-      <View style={styles.distanceContainer}>
-      <Text style={styles.distanceText}>{`${age_preference[0]} - ${age_preference[1]}`}</Text>
-      </View>
-      <View style={styles.nextButtonContainer}> 
-        <TouchableOpacity onPress={next} style={styles.nextButton}>
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.header}>
+          <Header
+          onBackPress={() => navigation.goBack()}
+          onSkipPress={skip}
+          />
+        </View>
+        <View style={styles.topContainer}>
+          {showMessage && (
+            <Text style={styles.continueText}>
+              Continue setting up your Gym Rats profile.
+            </Text>
+          )}
+          <Text style={styles.title}>Age Preference</Text>
+         <View style={styles.sliderContainer}>
+          <MultiSlider
+            values={age_preference}
+            sliderLength={280}
+            onValuesChange={setAge_preference}
+            min={17}
+            max={100}
+            step={1}
+            allowOverlap={false}
+            minMarkerOverlapDistance={10}
+            selectedStyle={{backgroundColor: '#FF775C'}}
+            unselectedStyle={{backgroundColor: '#DADADA'}}
+            markerStyle={{backgroundColor: 'black'}}
+          />
+         </View>
+           <Text style={styles.ageText}>{`${age_preference[0]} - ${age_preference[1]}`}</Text>
+         </View>
+       <View style={styles.bottomContainer}> 
+       <NextButton
+       onButtonPress={next}
+       />
+       </View>
     </View>
 
     </SafeAreaView>
@@ -110,10 +121,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  header: {
+    backgroundColor: 'white',
+  },
+  topContainer :{
+    flex: 5,
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    paddingHorizontal: 15,
 
   },
-  continueText: {
+  continueText: { // this should be under the reusable folder
     marginBottom: 10,
     marginTop: 10,
     fontSize: 16,
@@ -121,53 +141,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontStyle: 'italic',
     fontWeight: 'bold',
-  },
-  titleContainer: {
-    position: 'absolute',
-    top: height * 0.08,
     backgroundColor: 'white',
   },
   title: {
     fontSize: 20,
-    fontWeight: '700',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-VariableFont',
+    textAlign: 'left',
+    marginTop: 20,
+    paddingHorizontal: 25,
   },
   sliderContainer: {
-    position: 'absolute',
-    alignItems: 'center',
-    top: height * 0.25,
+    alignItems: 'left',
+    backgroundColor: 'transparent',
+    marginTop: 80,
+    paddingHorizontal: 30,
   },
-  distanceContainer: {
-    position: 'absolute',
-    top: height * 0.2,
-  },
-  distanceText: {
-    fontSize: 24,
+  ageText: {
+    fontSize: 16,
     fontWeight: '700',
     fontFamily: 'Urbanist-VariableFont',
-    
+    textAlign: 'center',
+    bottom: height * 0.09,
   },
-  nextButtonContainer: {
-    position: 'absolute',
-    width: '100%',
-    alignItems: 'center',
-    bottom: height * 0.1,
-  },
-  nextButton: {
-    width: '80%',
-    height: 56,
-    backgroundColor: '#FF6A4D',
-    borderRadius: 8,
-    alignItems: 'center',
+  bottomContainer: {
+    flex: 1,
     justifyContent: 'center',
-  },
-  nextButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#202244',
-    fontFamily: 'Urbanist-VariableFont',
+    backgroundColor: 'white',
+    padding: 10,
   },
 });
 
-export default Setup4Screen;
+export default Setup4;

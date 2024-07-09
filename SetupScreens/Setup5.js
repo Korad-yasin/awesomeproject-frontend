@@ -5,6 +5,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import * as Font from 'expo-font';
 import FastImage from 'react-native-fast-image';
+import Header from '../reusable/header';
+import NextButton from '../reusable/button';
 
 import axios from 'axios';
 import SetupContext from '../SetupContext';
@@ -14,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setUserAvatar } from '../redux/actions/userActions'; // Adjust the path as necessary
 
 
-const Setup5Screen = ({navigation}) => {
+const Setup5 = ({navigation}) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const [images, setImages] = useState([null, null, null, null]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -151,21 +153,30 @@ const Setup5Screen = ({navigation}) => {
       console.error('Error during setup5:', error);
     }
   };
+
+  const skip = async () => {
+    // Navigate to the next screen
+    navigation.navigate('BottomTabNavigator');
+  };
   
 
     
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <Header
+          onBackPress={() => navigation.goBack()}
+          onSkipPress={skip}
+          />
+        </View>
+        <View style={styles.middleContainer}>
         {showMessage && (
            <Text style={styles.continueText}>
              Continue setting up your Gym Rats profile.
            </Text>
          )}
-          <Text style={styles.textProfile}>Tap on the plus sign to add images</Text>
-        </View>
-        <View style={styles.middleContainer}>
+            <Text style={styles.textProfile}>Add images</Text>
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={[styles.imagePlaceholder, styles.profilePlaceholder]} onPress={() => openImageOptions(0)}>
                   {avatarUrl ? (<FastImage source={{ uri: avatarUrl }} style={[styles.imagePlaceholder, styles.image]} resizeMode="cover" /> 
@@ -190,11 +201,9 @@ const Setup5Screen = ({navigation}) => {
             </View>
         </View>
         <View style={styles.bottomContainer}>
-           <Pressable onPress={handleSetupCompletion} style={styles.buttonContainer}>
-               <View style={styles.button}>
-                 <Text style={styles.buttonText}>Next</Text>
-               </View>
-           </Pressable>
+          <NextButton
+          onButtonPress={handleSetupCompletion}
+          />
         </View>
         <Modal
             animationType="slide"
@@ -245,6 +254,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   continueText: {
     marginBottom: 10,
@@ -255,21 +265,17 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontWeight: 'bold',
   },
-  headerContainer: {
-    flex: 0.7,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
+  header: {
+    backgroundColor: 'white', 
 
   },
   textProfile: {
     color: 'black',
     fontSize: 20,
-    fontWeight: '400',
     fontStyle: 'normal',
-    padding: 5,
-    fontFamily: 'Urbanist-VariableFont'
+    paddingHorizontal: 30,
+    marginTop: 15,
+    marginBottom: 10,
   },
   middleContainer: {
     flex: 4,
@@ -309,26 +315,8 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonContainer: {
-    backgroundColor: '#FFBB56',
-    borderRadius: 8,
-    padding: 15,
-    width: '80%',
-    alignItems: 'center',
-    
-  },
-  buttonText: {
-    color: '#202244',
-    fontSize: 20,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-VariableFont',
-  },
-
-  
-  // ... (the rest of your styles here, unchanged)
 });
 
-export default Setup5Screen;
+export default Setup5;
