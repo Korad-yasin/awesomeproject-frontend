@@ -1,7 +1,9 @@
 // SportsGrid.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
 
 const sportsData = [
     { id: 'gym', name: 'Gym', icon: 'weight-lifter' },
@@ -13,18 +15,31 @@ const sportsData = [
     
 ];
 
-const SportsGrid = () => {
+const SportsGrid = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
 
     const handleSelect = (id) => {
         setSelected(prevSelected => {
             if (prevSelected.includes(id)) {
+                // Allow deselection
                 return prevSelected.filter(item => item !== id);
             } else {
-                return [...prevSelected, id];
+                // Allow selection only if less than 3 items are currently selected
+                if (prevSelected.length < 3) {
+                    return [...prevSelected, id];
+                } else {
+                    // Optionally provide feedback here if needed, e.g., a toast message
+                    alert("You can select up to 3 fitness options.");
+                }
             }
+            return prevSelected; // Return previous state if no new selection is added
         });
     };
+
+    useEffect(() => {
+        onSelectionChange(selected);
+    }, [selected, onSelectionChange]);
+
 
     return (
         <View style={styles.container}>
@@ -48,6 +63,8 @@ const SportsGrid = () => {
         
     );
 };
+
+// stylesheet code
 
 const styles = StyleSheet.create({
     container: {

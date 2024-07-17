@@ -1,15 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
-import MultiSlider from '@ptomasroos/react-native-multi-slider'; // Import MultiSlider here
+import { View, Text,  StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import MultiSlider from '@ptomasroos/react-native-multi-slider'; 
 import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
-import axios from 'axios'; // Import axios
-import { API_URL } from '../config';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
+import { updateAgePreferences } from '../services/userService';
 
 
-const Setup4 = ({ navigation }) => {
+const Age = ({ navigation }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const { userId} = useContext(SetupContext);
   const { setupData, setSetupData } = useContext(SetupContext);
@@ -48,23 +47,18 @@ const Setup4 = ({ navigation }) => {
 
     // Send the data to the server
     try {
-      const response = await axios.post(`${API_URL}/setup4`, {
-        userId,  // replace "id" with the actual variable where you're storing the user's ID
-        age_preference,
-        lastcompletedsetupstep: 4, 
-      });
-      console.log(response.data);
+      const response = await updateAgePreferences(userId, age_preference);
+      console.log("Age preference updated successfully:", response.data);
+      navigation.navigate('Pictures'); 
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update age preferences:", error);
+      alert("Failed to save your age preferences. Please try again.");
     }
-
-    // Navigate to the next screen
-    navigation.navigate('Setup5');
   };
 
   const skip = async () => {
     // Navigate to the next screen
-    navigation.navigate('Setup5');
+    navigation.navigate('Pictures');
   };
 
   return (
@@ -111,6 +105,10 @@ const Setup4 = ({ navigation }) => {
     
   );
 };
+
+// stylesheet
+
+
 
 const { height } = Dimensions.get('window'); // Obtain the height of the screen
 const styles = StyleSheet.create({
@@ -170,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Setup4;
+export default Age;

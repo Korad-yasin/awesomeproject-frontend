@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SetupProvider } from './SetupContext';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/store';  // Update the import here
-import Icon from 'react-native-vector-icons/Ionicons';
+
 
 
 import BottomTabNavigator from './screens/BottomTabNavigator';
@@ -25,16 +25,16 @@ import ResetPasswordScreen from './onboard/ResetPasswordScreen';
 import WelcomeScreen from './onboard/WelcomeScreen';
 
 // Import the setup screens
-import Setup1 from './SetupScreens/Setup1';
+import birthdate from './SetupScreens/birthdate';
 
-import Setup2 from './SetupScreens/Setup2';
-import Setup2clone2 from './SetupScreens/Setup2clone2';
-import Setup2x2 from './SetupScreens/Setup2x2';
-import Setup2x3 from './SetupScreens/Setup2x3';
-import Setup2x4 from './SetupScreens/Setup2x4';
-import Setup3 from './SetupScreens/Setup3';
-import Setup4 from './SetupScreens/Setup4';
-import Setup5 from './SetupScreens/Setup5';
+import gender from './SetupScreens/gender';
+import genderpref from './SetupScreens/genderpref';
+import fitnesschoice from './SetupScreens/fitnesschoice';
+import fitnesslevel from './SetupScreens/fitnesslevel';
+import fitnesstime from './SetupScreens/fitnesstime';
+import college from './SetupScreens/college';
+import age from './SetupScreens/age';
+import Pictures from './SetupScreens/Pictures';
 
 
 // import reusable screens
@@ -48,7 +48,7 @@ const App = () => {
       <SetupProvider>
          <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Setup1"
+              initialRouteName="birthdate"
               screenOptions={{
                 headerBackTitleVisible: false, // Hide the back button text
                 headerBackImage: () => null,
@@ -84,15 +84,15 @@ const App = () => {
               <Stack.Screen name="Registration" component={RegistrationScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-              <Stack.Screen name="Setup1" component={Setup1} />
-              <Stack.Screen name="Setup2" component={Setup2}  />
-              <Stack.Screen name="Setup2clone2" component={Setup2clone2}  />
-              <Stack.Screen name="Setup2x2" component={Setup2x2} />
-              <Stack.Screen name="Setup2x3" component={Setup2x3} />
-              <Stack.Screen name="Setup2x4" component={Setup2x4} />
-              <Stack.Screen name="Setup3" component={Setup3} />
-              <Stack.Screen name="Setup4" component={Setup4}  />
-              <Stack.Screen name="Setup5" component={Setup5} />
+              <Stack.Screen name="birthdate" component={birthdate} />
+              <Stack.Screen name="gender" component={gender}  />
+              <Stack.Screen name="genderpref" component={genderpref}  />
+              <Stack.Screen name="fitnesschoice" component={fitnesschoice} />
+              <Stack.Screen name="fitnesslevel" component={fitnesslevel} />
+              <Stack.Screen name="fitnesstime" component={fitnesstime} />
+              <Stack.Screen name="college" component={college} />
+              <Stack.Screen name="age" component={age}  />
+              <Stack.Screen name="Pictures" component={Pictures} />
            </Stack.Navigator>
          </NavigationContainer>
        </SetupProvider>

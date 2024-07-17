@@ -50,6 +50,8 @@ const CollegeDropdown = ({ data, selectedValue, onSelect, placeholder, isFocus, 
     );
 };
 
+// stylesheet
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

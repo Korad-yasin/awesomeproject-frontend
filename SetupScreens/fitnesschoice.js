@@ -1,18 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Pressable, FlatList } from 'react-native';
-import axios from 'axios'; 
-import { API_URL } from '../config';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
+import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
-import Times from '../components/times';
+import SportsGrid from '../components/sportsgrid';
+import { updateFitnessChoices } from '../services/userService';
 
 
-const Setup2x4 = ({ navigation }) => {
+const Fitnesschoice = ({ navigation }) => {
+    const { userId } = useContext(SetupContext);
+    const [selectedSports, setSelectedSports] = useState([]);
+
     const [fontLoaded, setFontLoaded] = useState(false);
-
-
-
 
     useEffect(() => {
         const loadFont = async () => {
@@ -26,19 +26,26 @@ const Setup2x4 = ({ navigation }) => {
     }, []);
 
 
-
-
-
     const next = async () => {
-        // Navigate to the next screen
-        navigation.navigate('Setup3');
+        if (selectedSports.length === 0 || selectedSports.length > 3) {
+            alert('Please select 1 to 3 fitness options.');
+            return;
+        }
+        // Assuming updateFitnessChoices is already defined in userService.js
+        try {
+            await updateFitnessChoices(userId, selectedSports); // Replace 'userId' with actual user ID
+            navigation.navigate('fitnesslevel');
+        } catch (error) {
+            console.error('Failed to update fitness choices:', error);
+        }
     };
-
 
     const skip = async () => {
         // Navigate to the next screen
-        navigation.navigate('Setup3');
+        navigation.navigate('fitnesslevel');
     };
+
+    
 
 
     return (
@@ -51,8 +58,8 @@ const Setup2x4 = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.optionContainer}>
-                    <Times
-                    onSelectionChange={(selections) => console.log(selections)}
+                    <SportsGrid
+                      onSelectionChange={setSelectedSports} 
                     />
                 </View>
                 <View style={styles.bottomContainer}>
@@ -65,11 +72,10 @@ const Setup2x4 = ({ navigation }) => {
         </SafeAreaView>
         
     );
-
-
-
 };
 
+
+// stylesheets 
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
@@ -81,20 +87,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     }, 
     header: {
-        backgroundColor:'white',
+        backgroundColor: 'white',
     },
     optionContainer: {
         flex: 5,
         backgroundColor: 'white',
+
     },
     bottomContainer: {
         flex: 1,
         backgroundColor: 'white',
         justifyContent: 'center',
-
     
     },
     
 });
 
-export default Setup2x4;
+export default Fitnesschoice;

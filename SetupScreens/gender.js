@@ -1,11 +1,15 @@
-import React, {useState} from 'react'; // Import useContext and useState
+import React, {useState, useContext} from 'react'; // Import useContext and useState
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Dimensions, SafeAreaView } from 'react-native';
+import SetupContext from '../SetupContext';
 import GenderItem from '../reusable/genderItem';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
+import { updateUserGender } from '../services/userService';
 
 
-const Setup2 = ({navigation}) => {
+const Gender = ({navigation}) => {
+    const { userId } = useContext(SetupContext);
+
     const [gender, setGender] = useState ([
         {text: 'woman', key: '1'}, {text: 'man', key: '2'}, {text: 'non-binary', key: '3'}
     ]);
@@ -16,9 +20,25 @@ const Setup2 = ({navigation}) => {
         setSelectedKey(key);
     };
 
+
     const next = async () => {
+        if (selectedKey) {
+          const selectedGender = gender.find(item => item.key === selectedKey).text;
+          await updateUserGender(userId, selectedGender) // Replace 'userId' with actual user ID variable
+            .then(() => {
+              navigation.navigate('genderpref');
+            })
+            .catch(error => {
+              console.error('Failed to update gender:', error);
+            });
+        } else {
+          alert('Please select a gender.');
+        }
+    };
+
+    const skip = async () => {
         // Navigate to the next screen
-        navigation.navigate('Setup2clone2');
+        navigation.navigate('genderpref');
     };
 
     
@@ -29,7 +49,7 @@ const Setup2 = ({navigation}) => {
                 <View style={styles.header}>
                 <Header
                 onBackPress={() => navigation.goBack()}
-                onSkipPress={next}
+                onSkipPress={skip}
                 />
                 </View>
                 <View style={styles.list}>
@@ -86,4 +106,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Setup2;
+export default Gender;

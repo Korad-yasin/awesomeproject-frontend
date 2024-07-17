@@ -69,10 +69,39 @@ const LoginScreen = ({ navigation }) => {
       console.log("Dispatching setLoggedInUser:", response.data);
 
       let nextScreen = 'BottomTabNavigator';
-      if (lastcompletedsetupstep !== undefined && lastcompletedsetupstep < 5) {
+      if (lastcompletedsetupstep !== undefined) {
         setIsReturningUser(true);
-        // If the user has not completed all setup steps, navigate to the next incomplete setup screen
-        nextScreen = `Setup${lastcompletedsetupstep + 1}`;
+        switch(lastcompletedsetupstep) {
+          case 0:
+              nextScreen = 'birthdate'; // First setup step
+              break;
+          case 1:
+              nextScreen = 'gender'; 
+              break;
+          case 2:
+              nextScreen = 'genderpref'; 
+              break;
+          case 3:
+              nextScreen = 'fitnesschoice'; // First setup step
+              break;
+          case 4:
+              nextScreen = 'fitnesslevel'; 
+              break;
+          case 5:
+              nextScreen = 'fitnesstime'; 
+              break;
+
+          case 6:
+              nextScreen = 'college'; // First setup step
+              break;
+          case 7:
+              nextScreen = 'age'; 
+              break;
+          case 8:
+              nextScreen = 'Pictures'; 
+              break;
+      }
+
       } else {
         setIsReturningUser(false);
       }

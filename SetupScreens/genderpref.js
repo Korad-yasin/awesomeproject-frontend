@@ -1,25 +1,52 @@
-import React, {useState} from 'react'; // Import useContext and useState
+// genderpre.js
+
+import React, {useState, useContext} from 'react'; // Import useContext and useState
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Dimensions, SafeAreaView } from 'react-native';
+import SetupContext from '../SetupContext';
 import GenderItem from '../reusable/genderItem';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
+import { updateGenderPreferences } from '../services/userService';
 
 
-const Setup2clone2 = ({navigation}) => {
+const Genderpref = ({navigation}) => {
+    const { userId } = useContext(SetupContext);
+
     const [gender, setGender] = useState ([
         {text: 'woman', key: '1'}, {text: 'man', key: '2'}, {text: 'non-binary', key: '3'}
     ]);
 
-    const [selectedKey, setSelectedKey] = useState(null);
+    const [selectedKeys, setSelectedKeys] = useState([]);
 
     const pressHandler = (key) => {
-        setSelectedKey(key);
+        if (selectedKeys.includes(key)) {
+            setSelectedKeys(selectedKeys.filter(item => item !== key)); // Remove key if already selected
+        } else {
+            setSelectedKeys([...selectedKeys, key]); // Add key if not already selected
+        }
     };
 
     const next = async () => {
-        // Navigate to the next screen
-        navigation.navigate('Setup2x2');
+        if (!selectedKeys.length) {
+            alert('Please select at least one option.');
+            return;
+        }
+    
+        try {
+            const response = await updateGenderPreferences(userId, selectedKeys); // Replace 'userId' with actual user ID variable
+            console.log('Preferences updated:', response.data);
+            navigation.navigate('fitnesschoice');
+        } catch (error) {
+            console.error('Failed to update gender preferences:', error);
+        }
     };
+
+    const skip = async () => {
+        // Navigate to the next screen
+        navigation.navigate('fitnesschoice');
+    };
+
+
 
     
 
@@ -29,7 +56,7 @@ const Setup2clone2 = ({navigation}) => {
                 <View style={styles.header}>
                 <Header
                 onBackPress={() => navigation.goBack()}
-                onSkipPress={next}
+                onSkipPress={skip}
                 />
                 </View>
                 <View style={styles.list}>
@@ -37,7 +64,7 @@ const Setup2clone2 = ({navigation}) => {
                     <FlatList
                         data={gender}
                         renderItem={({ item }) => (
-                            <GenderItem item={item} pressHandler={pressHandler} isSelected={selectedKey === item.key} />
+                            <GenderItem item={item} pressHandler={() => pressHandler(item.key)} isSelected={selectedKeys.includes(item.key)} />
                         )}
                         keyExtractor={item => item.key}
                     />
@@ -89,4 +116,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Setup2clone2;
+export default Genderpref;

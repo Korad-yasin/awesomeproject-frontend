@@ -67,7 +67,7 @@ const RegistrationScreen = ({ navigation }) => {
         }
       }
       console.log("Navigating back to setup screens...");
-      navigation.navigate('Setup1');
+      navigation.navigate('birthdate');
       return; // Prevent the registration logic from proceeding
     }
 
@@ -104,7 +104,7 @@ const RegistrationScreen = ({ navigation }) => {
               email: user.email,
               name: name,
             }));
-            navigation.navigate('Setup1');
+            navigation.navigate('birthdate');
           } else {
             console.error("Failed to store user data");
           }

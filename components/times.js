@@ -1,3 +1,4 @@
+// components/times.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -5,19 +6,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 const timeOptions = ["6:00 - 9:00 am", "9:00 - 12:00 pm", "noon - 3:00 pm", "3:00 - 6:00 pm", "6:00 - 9:00 pm", "9:00 - 11:59 pm"];
 const frequencyOptions = ["   1 - 3   ", "   3 - 5   ", "more than 5"];
 
-const Times = ({ onSelectionChange }) => {
-    const [selectedTime, setSelectedTime] = useState([]);
-    const [selectedFrequency, setSelectedFrequency] = useState([]);
-
-    const handleTimeSelect = (time) => {
-        setSelectedTime(time);
-        onSelectionChange({ selectedTime: time, selectedFrequency });
-    };
-
-    const handleFrequencySelect = (frequency) => {
-        setSelectedFrequency(frequency);
-        onSelectionChange({ selectedTime, selectedFrequency: frequency });
-    };
+const Times = ({ selectedTime, handleTimeSelect, selectedFrequency, setSelectedFrequency }) => {
+    
 
     return (
         <View style={styles.container}>
@@ -25,7 +15,11 @@ const Times = ({ onSelectionChange }) => {
             <Text style={styles.text}>Select your peak times aka when you workout </Text>
             <View style={styles.times}>
             {timeOptions.map(time => (
-                <TouchableOpacity key={time} style={[styles.option, selectedTime === time && styles.selected]} onPress={() => handleTimeSelect(time)}>
+                <TouchableOpacity 
+                     key={time} 
+                     style={[styles.option, selectedTime.includes(time) && styles.selected]}
+                     onPress={() => handleTimeSelect(time)}
+                >
                     <Text>{time}</Text>
                 </TouchableOpacity>
             ))}
@@ -33,7 +27,11 @@ const Times = ({ onSelectionChange }) => {
             <Text style={styles.heading}>Days per week</Text>
             <View style={styles.days}>
             {frequencyOptions.map(freq => (
-                <TouchableOpacity key={freq} style={[styles.option, selectedFrequency === freq && styles.selected]} onPress={() => handleFrequencySelect(freq)}>
+                <TouchableOpacity 
+                   key={freq} 
+                   style={[styles.option, selectedFrequency === freq && styles.selected]}
+                   onPress={() => setSelectedFrequency(freq)}
+                >
                     <Text>{freq}</Text>
                 </TouchableOpacity>
             ))}
@@ -41,6 +39,8 @@ const Times = ({ onSelectionChange }) => {
         </View>
     );
 };
+
+// stylesheet
 
 const styles = StyleSheet.create({
     container: {

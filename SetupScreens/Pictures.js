@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, SafeAreaView, Dimensions, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
@@ -7,16 +7,15 @@ import * as Font from 'expo-font';
 import FastImage from 'react-native-fast-image';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
+import { completeUserProfileSetup } from '../services/userService';
 
-import axios from 'axios';
 import SetupContext from '../SetupContext';
-import { API_URL } from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { setUserAvatar } from '../redux/actions/userActions'; // Adjust the path as necessary
 
 
-const Setup5 = ({navigation}) => {
+const Pictures = ({navigation}) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const [images, setImages] = useState([null, null, null, null]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -137,21 +136,16 @@ const Setup5 = ({navigation}) => {
 
     try {
       console.log({ userId, avatarUrl, validGalleryImages });  // Log the data being sent in the API request
-      const response = await axios.post(`${API_URL}/setup5`, {
-        userId, 
-        avatarUrl: avatarUrl, // Send avatar URL separately
-        galleryUrls: validGalleryImages, // Send only gallery images
-        lastcompletedsetupstep: 5, 
-      });
-      console.log(response.data);
-
+      const data = await completeUserProfileSetup(userId, avatarUrl, validGalleryImages);
+      console.log("Setup completion response:", data);
       await AsyncStorage.setItem('hasCompletedSetup', 'true');
       console.log("hasCompletedSetup set to true in AsyncStorage");
-      // If the response indicates success, navigate to the next screen
-      navigation.navigate('BottomTabNavigator', { justCompletedSetup: true }); 
+      navigation.navigate('BottomTabNavigator', { justCompletedSetup: true });
     } catch (error) {
-      console.error('Error during setup5:', error);
+      console.error('Error during setup completion:', error);
+      alert("Failed to complete setup. Please try again.");
     }
+
   };
 
   const skip = async () => {
@@ -319,4 +313,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Setup5;
+export default Pictures;

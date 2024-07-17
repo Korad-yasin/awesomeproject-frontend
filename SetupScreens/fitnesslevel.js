@@ -1,14 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Pressable, FlatList } from 'react-native';
-import axios from 'axios'; 
-import { API_URL } from '../config';
+import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import Level from '../components/level';
+import { updateFitnessLevel } from '../services/userService';
 
 
-const Setup2x3 = ({ navigation }) => {
+const Fitnesslevel = ({ navigation }) => {
+    const { userId } = useContext(SetupContext);
+
     const [fontLoaded, setFontLoaded] = useState(false);
     const [level, setLevel] = useState ([
         {text: 'beginner', key: '1'}, {text: 'intermediate', key: '2'}, {text: 'Pro', key: '3'}
@@ -35,13 +37,21 @@ const Setup2x3 = ({ navigation }) => {
 
 
     const next = async () => {
-        // Navigate to the next screen
-        navigation.navigate('Setup2x4');
+        if (!selectedKey) {
+            alert('Please select a fitness level.');
+            return;
+        }
+        try {
+            await updateFitnessLevel(userId, selectedKey);
+            navigation.navigate('fitnesstime');
+        } catch (error) {
+            console.error('Failed to update fitness level:', error);
+        }
     };
 
     const skip = async () => {
         // Navigate to the next screen
-        navigation.navigate('Setup2x4');
+        navigation.navigate('fitnesstime');
     };
 
 
@@ -118,4 +128,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Setup2x3;
+export default Fitnesslevel;

@@ -1,22 +1,25 @@
 //
-
 import { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Dimensions, ActivityIndicator, TouchableOpacity, Flatlist } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator} from 'react-native';
 import * as Font from 'expo-font';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import SetupContext from '../SetupContext';
-import axios from 'axios'; 
-import { API_URL } from '../config';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import CollegeDropdown from '../components/collegeDropdown';
-import UsaColleges from '../hooks/usaColleges';
+import UsaColleges from '../hooks/collegeService';
+import { updateCollegeSelections } from '../services/userService';
 
 
 
 
 
-const Setup3 = ({ navigation }) => {
+const College = ({ navigation }) => {
+    const { userId } = useContext(SetupContext);
+
+    const [selectedCollege, setSelectedCollege] = useState(null);
+    const [selectedOtherColleges, setSelectedOtherColleges] = useState([]);
+    const { colleges, isLoading, error } = UsaColleges('MA');  // Assuming you pass a state abbreviation
+    const [isFocus, setIsFocus] = useState(false);
 
     const [fontLoaded, setFontLoaded] = useState(false);
 
@@ -31,14 +34,7 @@ const Setup3 = ({ navigation }) => {
         loadFont();
     }, []);
 
-    const [selectedCollege, setSelectedCollege] = useState(null);
-    const [selectedOtherColleges, setSelectedOtherColleges] = useState([]);
-    const { colleges, isLoading, error } = UsaColleges('MA');  // Assuming you pass a state abbreviation
-    const [isFocus, setIsFocus] = useState(false);
 
-
-
-    
     if (!fontLoaded) {
      return <ActivityIndicator size="large" />;
     }
@@ -46,15 +42,25 @@ const Setup3 = ({ navigation }) => {
     if (error) return <Text>Error fetching colleges: {error.message}</Text>;
 
     const next = async () => {
-        // Navigate to the next screen
-        navigation.navigate('Setup4');
+        if (!selectedCollege || !selectedOtherColleges.length) {
+            alert("Please select your school and at least one other school.");
+            return;
+        }
+        try {
+            
+            const response = await updateCollegeSelections(userId, selectedCollege, selectedOtherColleges);
+            console.log("College selection updated successfully:", response.data);
+            navigation.navigate('age'); 
+        } catch (error) {
+            console.error("Failed to update college selections:", error);
+            alert("Failed to save your college preferences. Please try again.");
+        }
     };
 
 
-
     const skip = async () => {
-        // Navigate to the next screen
-        navigation.navigate('Setup4');
+        
+        navigation.navigate('age');
     };
       
 
@@ -159,5 +165,5 @@ const styles = StyleSheet.create({
     },    
 });
 
-export default Setup3;
+export default College;
 

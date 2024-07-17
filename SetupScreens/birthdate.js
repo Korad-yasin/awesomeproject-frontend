@@ -3,13 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, But
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SetupContext from '../SetupContext';
 import * as Font from 'expo-font';
-import axios from 'axios'; // Import axios to make HTTP requests
-import { API_URL } from '../config';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
+import { updateUserSetupStep } from '../services/userService';
 
 
-const Setup1 = ({ navigation }) => {
+const Birthdate = ({ navigation }) => {
   const { userId } = useContext(SetupContext); // Add this line
   const [birthday, setBirthday] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -17,6 +16,8 @@ const Setup1 = ({ navigation }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   const { setupData, setSetupData } = useContext(SetupContext);
 
+
+  // btw, returning to setup screens for all files should be moved to a single file and imported
   const { isReturningUser, setIsReturningUser } = useContext(SetupContext);
   const [showMessage, setShowMessage] = useState(isReturningUser);
 
@@ -26,8 +27,6 @@ const Setup1 = ({ navigation }) => {
       setIsReturningUser(false); 
     }
   }, [showMessage, setIsReturningUser]);
-
-
 
   useEffect(() => {
     const loadFont = async () => {
@@ -65,25 +64,22 @@ const Setup1 = ({ navigation }) => {
 
     setSetupData({ ...setupData, birthday});
 
-    // Send the data to the server
-    axios.post(`${API_URL}/setup1`, {
-      userId,
-      birthday,
-      lastcompletedsetupstep: 1,
-    })
-    .then(function (response) {
+    // Send the data to the server using userService
+
+    updateUserSetupStep(userId, birthday)
+    .then(response => {
       console.log(response);
+      navigation.navigate('gender');
     })
-    .catch(function (error) {
+    .catch(error => {
       console.log(error);
     });
 
-    navigation.navigate('Setup2');
   };
 
   const skip = async () => {
     // Navigate to the next screen
-    navigation.navigate('Setup2');
+    navigation.navigate('gender');
   };
   
   return (
@@ -209,4 +205,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default Setup1;
+export default Birthdate;

@@ -1,11 +1,11 @@
-// usaColleges.js
+// collegeService.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 
 
 
-const UsaColleges = (state) => {
+const collegeService = (state) => {
     const [colleges, setColleges] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -36,4 +36,4 @@ const UsaColleges = (state) => {
     return { colleges, loading, error };
 };
 
-export default UsaColleges;
+export default collegeService;
