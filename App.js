@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,6 +36,7 @@ import age from './SetupScreens/age';
 import Pictures from './SetupScreens/Pictures';
 
 
+
 // import reusable screens
 
 const Stack = createStackNavigator();
@@ -48,7 +48,7 @@ const App = () => {
       <SetupProvider>
          <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="birthdate"
+              initialRouteName=""
               screenOptions={{
                 headerBackTitleVisible: false, // Hide the back button text
                 headerBackImage: () => null,

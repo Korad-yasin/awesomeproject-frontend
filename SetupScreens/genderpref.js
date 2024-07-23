@@ -1,12 +1,14 @@
 // genderpre.js
 
 import React, {useState, useContext} from 'react'; // Import useContext and useState
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Dimensions, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import SetupContext from '../SetupContext';
 import GenderItem from '../reusable/genderItem';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import { updateGenderPreferences } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
 
 
 const Genderpref = ({navigation}) => {
@@ -17,7 +19,6 @@ const Genderpref = ({navigation}) => {
     ]);
 
     const [selectedKeys, setSelectedKeys] = useState([]);
-
     const pressHandler = (key) => {
         if (selectedKeys.includes(key)) {
             setSelectedKeys(selectedKeys.filter(item => item !== key)); // Remove key if already selected
@@ -25,6 +26,14 @@ const Genderpref = ({navigation}) => {
             setSelectedKeys([...selectedKeys, key]); // Add key if not already selected
         }
     };
+
+
+    // hooks
+    const fontLoaded = useFonts();
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" />;
+    }
+
 
     const next = async () => {
         if (!selectedKeys.length) {

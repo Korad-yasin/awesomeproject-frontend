@@ -1,40 +1,32 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Pressable, FlatList } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import SetupContext from '../SetupContext';
-import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import Level from '../components/level';
 import { updateFitnessLevel } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
 
 
 const Fitnesslevel = ({ navigation }) => {
     const { userId } = useContext(SetupContext);
 
-    const [fontLoaded, setFontLoaded] = useState(false);
     const [level, setLevel] = useState ([
         {text: 'beginner', key: '1'}, {text: 'intermediate', key: '2'}, {text: 'Pro', key: '3'}
     ]);
 
     const [selectedKey, setSelectedKey] = useState(null);
-
     const pressHandler = (key) => {
         setSelectedKey(key);
     };
 
+    // hooks
+    const fontLoaded = useFonts();
 
-    useEffect(() => {
-        const loadFont = async () => {
-          await Font.loadAsync({
-            'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-            'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-          });
-          setFontLoaded(true);
-        };
-        loadFont();
-    }, []);
-
-
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" />;
+    }
 
     const next = async () => {
         if (!selectedKey) {

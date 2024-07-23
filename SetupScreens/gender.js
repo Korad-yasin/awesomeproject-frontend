@@ -1,10 +1,13 @@
 import React, {useState, useContext} from 'react'; // Import useContext and useState
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Dimensions, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import SetupContext from '../SetupContext';
 import GenderItem from '../reusable/genderItem';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import { updateUserGender } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
+
 
 
 const Gender = ({navigation}) => {
@@ -15,10 +18,16 @@ const Gender = ({navigation}) => {
     ]);
 
     const [selectedKey, setSelectedKey] = useState(null);
-
     const pressHandler = (key) => {
         setSelectedKey(key);
     };
+
+    const fontLoaded = useFonts();
+    
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" />;
+    }
+
 
 
     const next = async () => {
@@ -95,6 +104,7 @@ const styles = StyleSheet.create({
     text:{
         fontWeight: 'bold',
         marginBottom: 30,
+
 
     },
     bottomContainer: {

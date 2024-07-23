@@ -1,15 +1,13 @@
 //
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator} from 'react-native';
-import * as Font from 'expo-font';
 import SetupContext from '../SetupContext';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import CollegeDropdown from '../components/collegeDropdown';
 import UsaColleges from '../hooks/collegeService';
 import { updateCollegeSelections } from '../services/userService';
-
-
+import useFonts from '../hooks/useFonts';
 
 
 
@@ -21,20 +19,8 @@ const College = ({ navigation }) => {
     const { colleges, isLoading, error } = UsaColleges('MA');  // Assuming you pass a state abbreviation
     const [isFocus, setIsFocus] = useState(false);
 
-    const [fontLoaded, setFontLoaded] = useState(false);
-
-    useEffect(() => {
-        const loadFont = async () => {
-          await Font.loadAsync({
-            'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-            'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-          });
-          setFontLoaded(true);
-        };
-        loadFont();
-    }, []);
-
-
+    const fontLoaded = useFonts();
+    
     if (!fontLoaded) {
      return <ActivityIndicator size="large" />;
     }

@@ -1,40 +1,28 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text,  StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text,  StyleSheet, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'; 
 import SetupContext from '../SetupContext';
-import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import { updateAgePreferences } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
 
 
 const Age = ({ navigation }) => {
-  const [fontLoaded, setFontLoaded] = useState(false);
   const { userId} = useContext(SetupContext);
   const { setupData, setSetupData } = useContext(SetupContext);
   const [age_preference, setAge_preference] = useState([17, 100]); // Age is now an array
   
-  const { isReturningUser, setIsReturningUser } = useContext(SetupContext);
-  const [showMessage, setShowMessage] = useState(isReturningUser);
 
-  useEffect(() => {
-    if (showMessage) {
-      setShowMessage(true); 
-      setIsReturningUser(false); 
-    }
-  }, [showMessage, setIsReturningUser]);
+  const fontLoaded = useFonts();
+
+
+
+  if (!fontLoaded) {
+    return <ActivityIndicator size="large" />;
+  }
   
-
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
 
   const next = async () => {
     if (age_preference[0] < 17 || age_preference[1] > 100) {
@@ -71,11 +59,7 @@ const Age = ({ navigation }) => {
           />
         </View>
         <View style={styles.topContainer}>
-          {showMessage && (
-            <Text style={styles.continueText}>
-              Continue setting up your Gym Rats profile.
-            </Text>
-          )}
+  
           <Text style={styles.title}>Age Preference</Text>
          <View style={styles.sliderContainer}>
           <MultiSlider

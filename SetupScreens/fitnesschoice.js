@@ -1,29 +1,26 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, StyleSheet, SafeAreaView, ActivityIndicator } from 'react-native';
 import SetupContext from '../SetupContext';
-import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import SportsGrid from '../components/sportsgrid';
 import { updateFitnessChoices } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
 
 
 const Fitnesschoice = ({ navigation }) => {
     const { userId } = useContext(SetupContext);
     const [selectedSports, setSelectedSports] = useState([]);
 
-    const [fontLoaded, setFontLoaded] = useState(false);
+    // hooks
+    const fontLoaded = useFonts();
 
-    useEffect(() => {
-        const loadFont = async () => {
-          await Font.loadAsync({
-            'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-            'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-          });
-          setFontLoaded(true);
-        };
-        loadFont();
-    }, []);
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" />;
+    }
+
+
 
 
     const next = async () => {

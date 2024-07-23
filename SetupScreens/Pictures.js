@@ -1,13 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Dimensions } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import * as Font from 'expo-font';
 import FastImage from 'react-native-fast-image';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import { completeUserProfileSetup } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+
 
 import SetupContext from '../SetupContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,7 +17,6 @@ import { setUserAvatar } from '../redux/actions/userActions'; // Adjust the path
 
 
 const Pictures = ({navigation}) => {
-  const [fontLoaded, setFontLoaded] = useState(false);
   const [images, setImages] = useState([null, null, null, null]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -24,26 +24,16 @@ const Pictures = ({navigation}) => {
   const dispatch = useDispatch();
   const [avatarUrl, setAvatarUrl] = useState(null);
 
-  const { isReturningUser, setIsReturningUser } = useContext(SetupContext);
-  const [showMessage, setShowMessage] = useState(isReturningUser);
+  
 
-  useEffect(() => {
-    if (showMessage) {
-      setShowMessage(true); 
-      setIsReturningUser(false); 
-    }
-  }, [showMessage, setIsReturningUser]);
+  const fontLoaded = useFonts();
 
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
+  
+
+  if (!fontLoaded) {
+    return <ActivityIndicator size="large" />;
+  } 
+
 
 
   const handleImageSelection = (index) => {
@@ -165,11 +155,6 @@ const Pictures = ({navigation}) => {
           />
         </View>
         <View style={styles.middleContainer}>
-        {showMessage && (
-           <Text style={styles.continueText}>
-             Continue setting up your Gym Rats profile.
-           </Text>
-         )}
             <Text style={styles.textProfile}>Add images</Text>
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={[styles.imagePlaceholder, styles.profilePlaceholder]} onPress={() => openImageOptions(0)}>

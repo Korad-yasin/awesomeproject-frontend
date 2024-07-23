@@ -2,10 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, Button, Dimensions, SafeAreaView} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SetupContext from '../SetupContext';
-import * as Font from 'expo-font';
 import Header from '../reusable/header';
 import NextButton from '../reusable/button';
 import { updateUserSetupStep } from '../services/userService';
+import useFonts from '../hooks/useFonts';
+import useReturnMessage from '../hooks/useReturnMessage';
+import ReturnMessage from '../reusable/ReturnMessage';
 
 
 const Birthdate = ({ navigation }) => {
@@ -13,35 +15,27 @@ const Birthdate = ({ navigation }) => {
   const [birthday, setBirthday] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
-  const [fontLoaded, setFontLoaded] = useState(false);
   const { setupData, setSetupData } = useContext(SetupContext);
 
-
-  // btw, returning to setup screens for all files should be moved to a single file and imported
-  const { isReturningUser, setIsReturningUser } = useContext(SetupContext);
-  const [showMessage, setShowMessage] = useState(isReturningUser);
+  // hooks
+  const fontLoaded = useFonts();
+  const showMessage = useReturnMessage();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (showMessage) {
-      setShowMessage(true); 
-      setIsReturningUser(false); 
+        setModalVisible(true);
     }
-  }, [showMessage, setIsReturningUser]);
+  }, [showMessage]);
 
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
+  const closeModal = () => setModalVisible(false);
+  
 
   if (!fontLoaded) {
     return <ActivityIndicator size="large" />;
   }
+
+
 
   const togglePicker = () => {
     setShowPicker(!showPicker);
@@ -91,11 +85,6 @@ const Birthdate = ({ navigation }) => {
           onSkipPress={skip}
           />
         </View>
-      {showMessage && (
-        <Text style={styles.continueText}>
-          Continue setting up your Gym Rats profile.
-        </Text>
-      )}
       <View style={styles.topContainer}>
         <Text style={styles.label}>Your age?</Text>
         <View style={styles.inputContainer}>
@@ -119,7 +108,7 @@ const Birthdate = ({ navigation }) => {
       )}
     </View>
     </View>
-      
+    {showMessage && <ReturnMessage modalVisible={modalVisible} onClose={closeModal} />}
     <View style={styles.bottomContainer}>
       <NextButton
       onButtonPress={next}
@@ -180,14 +169,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     right: '30%',
+    fontFamily: 'Urbanist-VariableFont'
+    
   },
   dateText: {
     textAlign: 'center',
   }, 
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end', // Align to the bottom of the screen
-    alignItems: 'center', // Center horizontally
+    justifyContent: 'flex-end', 
+    alignItems: 'center', 
     backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background when the modal Container pops up!
   },
   pickerContainer: {
