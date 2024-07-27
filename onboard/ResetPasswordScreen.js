@@ -1,27 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, SafeAreaView } from 'react-native';
+// ResetPasswordScreen.js
+
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { Alert } from 'react-native';
-import * as Font from 'expo-font';
+import useFonts from '../hooks/useFonts';
 
-
+import EmailTextInput from '../reusable/EmailAndName';
+import NextButton from '../reusable/button';
+import ScreenTitle from '../reusable/ScreenTitle';
+import ClickableText from '../reusable/clickableText';
 
 
 const ResetPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
-  const [fontLoaded, setFontLoaded] = useState(false);
 
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
-
+  const fontLoaded = useFonts();
   if (!fontLoaded) {
     return <ActivityIndicator size="large" />;
   }
@@ -47,30 +41,38 @@ const ResetPasswordScreen = ({ navigation }) => {
     }
   };
 
+  const backToLogin = async () => {
+    // Navigate to the next screen
+    navigation.navigate('Login');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.welcome}>Gym Rats</Text>
-      </View>
-      <View style={styles.allContainers}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Your Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={resetPassword} style={styles.button}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-      </View>
-    </View>
-
+           <View style={styles.container}>
+               <View style={styles.header}>
+                 <ScreenTitle  titleText="Some animation! " />  
+               </View>
+              <View style={styles.optionContainer}>
+                  <EmailTextInput 
+                     style={styles.email}
+                     value={email}
+                     onChangeText={setEmail}
+                  />
+                  <NextButton 
+                     onButtonPress={resetPassword} 
+                     buttonText='Submit'
+                  />
+                  <ClickableText 
+                    style={styles.forgotPasswordText} 
+                    actionText="Back to Login"
+                    onActionPress={backToLogin}
+                  />
+        
+                </View>
+                <View style={styles.bottomContainer}>
+                  
+            </View>
+         </View>
     </SafeAreaView>
     
   );
@@ -79,77 +81,48 @@ const ResetPasswordScreen = ({ navigation }) => {
 
 
 
+// stylesheet 
+
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
-    backgroundColor: 'white',
+      flex: 1,
+      backgroundColor: 'white',
   },
   container: {
-    flex: 1,
-    backgroundColor: '#FFEEC4',
-    
-
-  },
-  welcomeContainer: {
-    flex: 0.2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    borderTopLeftRadius: 60, 
-    borderTopRightRadius: 60, 
-  },
-  welcome: {
-    fontSize: 36,
-    textAlign: 'center',
-    color: '#1E232C',
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: 'bold',
-  },
-  allContainers: {
-    flex: 0.8,
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
-  inputContainer: {
-    height: 55,
-    width: '80%',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-    marginTop: 40,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    
-  },
-  input: {
-    fontSize: 18,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-    
-    width: '100%',
-
+      flex: 1,
+      backgroundColor: 'white',
+      paddingHorizontal: 20,
   }, 
-  buttonContainer: {
-    width: '80%',
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 15,
-    backgroundColor: '#FFBB56',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fff',
-    marginTop: 20,
+  header: {
+      flex: 1.5,
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
   },
-  buttonText: {
-    fontSize: 18,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-    color: '#202244',
-    textAlign: 'center',
+  optionContainer: {
+      flex: 5,
+      paddingVertical: 10,
+      backgroundColor: 'white',  
+
   },
+  email :{
+      marginTop: 10,
+      marginBottom: 20,
+
+  },
+  forgotPasswordText :{
+      left: '18%',
+      paddingVertical: 7,
+      color: 'black',
+
+  },
+  bottomContainer: {
+      flex: 1,
+      backgroundColor: 'white',
+      justifyContent: 'space-evenly',
+  },
+  
 });
+
 
 export default ResetPasswordScreen;

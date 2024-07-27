@@ -1,13 +1,15 @@
+// reusable/button.js
+
 import React from 'react';
 import { View, Text, StyleSheet, Pressable} from 'react-native';
 
 
-export default function NextButton ({onButtonPress}) {
+export default function NextButton ({onButtonPress, buttonText = 'Next', style}) {
     return (
         <View style={styles.bottomContainer}>
-             <Pressable onPress={onButtonPress} style={styles.buttonContainer}>
+             <Pressable onPress={onButtonPress} style={[styles.buttonContainer, style]}>
                  <View style={styles.button}>
-                     <Text style={styles.buttonText}>Next</Text>
+                     <Text style={styles.buttonText}>{buttonText}</Text>
                </View>
          </Pressable>
       </View>

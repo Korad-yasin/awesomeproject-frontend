@@ -7,7 +7,7 @@ import NextButton from '../reusable/button';
 import { updateUserSetupStep } from '../services/userService';
 import useFonts from '../hooks/useFonts';
 import useReturnMessage from '../hooks/useReturnMessage';
-import ReturnMessage from '../reusable/ReturnMessage';
+import ReturnMessage from '../components/ReturnMessage';
 
 
 const Birthdate = ({ navigation }) => {
@@ -108,7 +108,10 @@ const Birthdate = ({ navigation }) => {
       )}
     </View>
     </View>
-    {showMessage && <ReturnMessage modalVisible={modalVisible} onClose={closeModal} />}
+    {showMessage && 
+    <ReturnMessage modalVisible={modalVisible} onClose={closeModal} 
+    />
+    }
     <View style={styles.bottomContainer}>
       <NextButton
       onButtonPress={next}

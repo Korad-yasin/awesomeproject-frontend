@@ -1,29 +1,29 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, Pressable, SafeAreaView} from 'react-native';
+// RegistrationScreen.js
+
+import React, { useState, useContext } from 'react';
+import { View, StyleSheet, ActivityIndicator, SafeAreaView} from 'react-native';
 import SetupContext from '../SetupContext'; 
 import { API_URL } from '../config';
 import auth from '@react-native-firebase/auth';
 import { useDispatch, useSelector } from 'react-redux'; 
 import { setLoggedInUser } from '../redux/actions/userActions'; 
-import * as Font from 'expo-font';
-import Show from '../assets/images/Show.js';
-import Hide from '../assets/images/Hide.js';
+import useFonts from '../hooks/useFonts';
 
-
+import EmailTextInput from '../reusable/EmailAndName';
+import PasswordInput from '../reusable/PasswordInput';
+import NextButton from '../reusable/button';
+import ClickableText from '../reusable/clickableText';
+import ErrorMessage from '../reusable/errorMessage';
+import ScreenTitle from '../reusable/ScreenTitle';
 
 const RegistrationScreen = ({ navigation }) => {
   const { setUserId } = useContext(SetupContext); // Add this line
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [retypePassword, setRetypePassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isRetypePasswordVisible, setisRetypePasswordVisible] = useState(false);
-  const [passwordMismatchError, setPasswordMismatchError] = useState(false);
-
-
-
-  const [fontLoaded, setFontLoaded] = useState(false);
+  
 
   const loggedInUser = useSelector(state => state.loggedInUser); 
 
@@ -32,17 +32,7 @@ const RegistrationScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();  // Initialize useDispatch here
 
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
-
+  const fontLoaded = useFonts();
   if (!fontLoaded) {
     return <ActivityIndicator size="large" />;
   }
@@ -72,12 +62,11 @@ const RegistrationScreen = ({ navigation }) => {
     }
 
     if (password !== retypePassword) {
-      setPasswordMismatchError(true); // Show password mismatch error
       setErrorMessage("Passwords do not match."); // Update the error message
       setShowError(true); // Show the error message
       return; // Stop the registration process
     }
-    setPasswordMismatchError(false);
+    setShowError(false);
 
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(email, password);
@@ -128,245 +117,102 @@ const RegistrationScreen = ({ navigation }) => {
         }      
   };
 
+  // return and stylesheet
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.welcome}>find your trybe</Text>
-        {showError && (
-          <View style={styles.errorContainer}>
-             <Text style={styles.errorText}>{errorMessage}</Text>
+      <SafeAreaView style={styles.safeArea}>
+           <View style={styles.container}>
+               <View style={styles.header}>
+                 <ScreenTitle  titleText="find your trybe " />
+               </View>
+              <View style={styles.optionContainer}>
+                  <ErrorMessage 
+                    message={errorMessage}
+                    visible={showError}
+                  />
+                  <EmailTextInput 
+                     style={styles.email}
+                     value={email}
+                     onChangeText={setEmail}
+                     showName={true}
+                     nameValue={name}
+                     onChangeName={setName}
+                  />
+                  <PasswordInput 
+                     style={styles.password}
+                     value={password}
+                     onChangeText={setPassword}
+                     showRetype={true}
+                     retypeValue={retypePassword}
+                     onRetypeChange={setRetypePassword}
+                  />
+
+                </View>
+                <View style={styles.bottomContainer}>
+                      <NextButton 
+                         onButtonPress={registerOrUpdate} 
+                         buttonText='Register'
+                       />
+                      <ClickableText
+                         mainText='Already have an account?'
+                         actionText="Sign In"
+                         onActionPress={() => navigation.navigate('Login')}
+                       />
+                </View>
          </View>
-        )}
-        {passwordMismatchError && (
-           <View style={styles.errorContainer}>
-             <Text style={styles.errorText}>Passwords do not match.</Text>
-           </View>
-        )}
-      </View>
-      <View style={styles.allContainer}>
-      <View style={styles.nameContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={styles.emailContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Your email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.input2}
-          placeholder="Password"
-          secureTextEntry={!isPasswordVisible}
-          value={password}
-          onChangeText={setPassword}
-          autoCapitalize="none"
-        />
-        <TouchableOpacity
-         onPress={() => setIsPasswordVisible(prevState => !prevState)}
-         style={styles.visibilityToggle}
-        >
-         {isPasswordVisible ? <Hide /> : <Show />}
-       </TouchableOpacity>
-      </View>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.input2}
-          placeholder="Retype Password"
-          secureTextEntry={!isRetypePasswordVisible}
-          value={retypePassword}
-          onChangeText={setRetypePassword}
-          autoCapitalize="none"
-        />
-        <TouchableOpacity
-         onPress={() => setisRetypePasswordVisible(prevState => !prevState)}
-         style={styles.visibilityToggle}
-        >
-         {isRetypePasswordVisible ? <Hide /> : <Show />}
-       </TouchableOpacity>
+      </SafeAreaView>  
+    );
 
-      </View>
-      <Pressable onPress={registerOrUpdate} style={styles.buttonContainer}>
-        <View style={styles.button}>
-          <Text style={styles.registerText}>Register</Text>
-        </View>
-      </Pressable>   
-      <View style={styles.textSignin}>
-      <Text style={styles.text1}>Already have an account?  </Text>
-      <Text style={styles.text2} onPress={() => navigation.navigate('Login')}>Sign In</Text>
-      </View>
-
-      </View>
-      
-    </View>
-
-    </SafeAreaView>
     
-  );
+
 };
 // stylesheet code
 
-const { height } = Dimensions.get('window'); // Obtain the height of the screen
-
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
-    backgroundColor: 'white',
+      flex: 1,
+      backgroundColor: 'white',
   },
   container: {
-    flex: 1,
-    backgroundColor: 'teal',
-    paddingHorizontal: 20,
-    
+      flex: 1,
+      backgroundColor: 'white',
+      paddingHorizontal: 20,
+  }, 
+  header: {
+      flex: 1.3,
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
   },
-  welcomeContainer: {
-    flex: 0.2,
-    alignItems: 'center',
-    backgroundColor: 'pink',
-    justifyContent: 'flex-start',
-
-    
-  },
-  welcome: {
-    color: 'black',
-    fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center', 
-    fontFamily: 'Urbanist-VariableFont',
-    marginTop: 50,
-    backgroundColor: 'white',
+  optionContainer: {
+      flex: 6,
+      paddingVertical: 10,
+      backgroundColor: 'white',
+      alignItems: 'center',
 
   },
-  errorContainer: {
-    backgroundColor: 'lightpink',
-    borderRadius: 5,
-    marginVertical: 5,
-    padding: 5,
-    marginTop: 20,
+  email :{
+      marginTop: 10,
+
   },
-  errorText: {
-    color: 'darkred', 
-    textAlign: 'center',
+  password :{
+      marginTop: 20,
+      
   },
-  allContainer: {
-    flex: 0.8,
-    backgroundColor: 'azure',
-    alignItems: 'center',
-    
+  forgotPasswordText :{
+      left: '15%',
+      color: 'black',
+      paddingVertical: 5,
+
   },
-  input: {
-    fontSize: 18,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-    textAlign: 'left',  
-    width: '100%',
-    height: '70%',
-    
-    
+  bottomContainer: {
+      flex: 2,
+      backgroundColor: 'white',
+      justifyContent: 'space-evenly',
   },
-  nameContainer: {
-    height: 55,
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-    justifyContent: 'center', 
-    alignItems: 'flex-start', 
-    marginTop: 20,
-   
   
-  },
-  emailContainer: {
-    height: 55,
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-    justifyContent: 'center', 
-    alignItems: 'flex-start', 
-    marginTop: 15,
-    
-  },
-  passwordContainer: {
-    height: 55,
-    width: '80%',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-    marginBottom: height * 0.01, 
-    justifyContent: 'center', 
-    alignItems: 'flex-start', 
-    marginTop: 15,
-   
-    
-  },
-  visibilityToggle: {
-    marginLeft: 10, 
-    left: '90%',
-    bottom: '15%',
-  },
-  input2: {
-    fontSize: 18,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-    textAlign: 'left',  
-    width: '90%',
-    top: '25%',
-    
-  },
-  buttonContainer: {
-    backgroundColor: '#FFBB56',
-    padding: 15,
-    borderRadius: 8,
-    width: '80%',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#fff',
-    marginTop: height * 0.1, 
-    marginBottom: height * 0.23, 
-  },
-  registerText: {
-    color: '#202244',
-    fontSize: 20,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-  },
-  textSignin: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    textAlign: 'center',
-    justifyContent: 'center',
-    bottom: height * 0.2,
-  },
-  text1 : {
-    color: 'black',
-    fontSize: 16,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: '400',
-  },
-  text2 : {
-    color: 'green',
-    fontSize: 16,
-    fontFamily: 'Urbanist-VariableFont',
-    fontWeight: 'bold',
-  },
-
 });
+
 
 export default RegistrationScreen;
 

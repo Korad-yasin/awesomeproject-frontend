@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, SafeAreaView, Dimensions } from 'react-native';
-import * as Font from 'expo-font';
 import Gym from '../assets/images/Gym.js';
 import Gym2 from '../assets/images/Gym2.js';
+import useFonts from '../hooks/useFonts';
 
 
 const WelcomeScreen = ({ navigation }) => {
-  const [fontLoaded, setFontLoaded] = useState(false);
   const [isLifted, setIsLifted] = useState(false);
 
   useEffect(() => {
@@ -17,20 +16,11 @@ const WelcomeScreen = ({ navigation }) => {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
-  useEffect(() => {
-    const loadFont = async () => {
-      await Font.loadAsync({
-        'Chewy-Regular': require('../assets/fonts/Chewy-Regular.ttf'),
-        'Urbanist-VariableFont': require('../assets/fonts/Urbanist-VariableFont.ttf')
-      });
-      setFontLoaded(true);
-    };
-    loadFont();
-  }, []);
-
+  const fontLoaded = useFonts();
   if (!fontLoaded) {
     return <ActivityIndicator size="large" />;
   }
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
