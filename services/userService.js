@@ -1,4 +1,8 @@
 // userService.js
+
+// This is for the api SetupScreens - previously labelled Setup1, Setup2. 
+// Names appropriately changed so we know what they are doing. 
+
 import axios from 'axios';
 import { API_URL } from '../config';
 

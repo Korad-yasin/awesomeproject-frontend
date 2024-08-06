@@ -5,8 +5,6 @@ import { View, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native'
 import { useDispatch } from 'react-redux';  // Importing useDispatch
 import { setLoggedInUser } from '../redux/actions/userActions'; // Adjust the path accordingly
 import auth from '@react-native-firebase/auth';
-import { API_URL } from '../config';
-import axios from 'axios';
 import SetupContext from '../SetupContext';
 import useFonts from '../hooks/useFonts';
 
@@ -16,6 +14,8 @@ import NextButton from '../reusable/button';
 import ClickableText from '../reusable/clickableText';
 import ErrorMessage from '../reusable/errorMessage';
 import ScreenTitle from '../reusable/ScreenTitle';
+
+import { getUserDetails  } from '../services/authService';
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();  // Initializing dispatch
@@ -43,22 +43,23 @@ const LoginScreen = ({ navigation }) => {
       const firebaseUid = userCredential.user.uid;
       console.log('Logged in user:', user);
 
-      const response = await axios.get(`${API_URL}/users/firebase/${firebaseUid}`); // Fetch PostgreSQL ID using Firebase UID
-      console.log("Login response data:", response.data);
-      const { pg_id: pgId, avatar_url: avatarUrl, lastcompletedsetupstep } = response.data;
+      const userDetails = await getUserDetails(firebaseUid);
+      console.log("Fetched user details:", userDetails);
 
+
+      const { avatar_url: avatarUrl, lastcompletedsetupstep, pg_id: pgId } = userDetails;
       // Dispatch user information to your Redux store
       dispatch(setLoggedInUser({
         id: userCredential.user.uid,
         email: userCredential.user.email,
-        pgId, // Correctly setting pgId
+        pgId,
         avatarUrl,
         lastcompletedsetupstep,
         // Add this line to store the PostgreSQL ID
         
       }));
       setUserId(pgId);
-      console.log("Dispatching setLoggedInUser:", response.data);
+      console.log("Dispatching setLoggedInUser:", userDetails);
 
       let nextScreen = 'BottomTabNavigator';
       if (lastcompletedsetupstep !== undefined) {
@@ -114,6 +115,8 @@ const LoginScreen = ({ navigation }) => {
       setShowError(true);
     }
   };
+
+  // return and stylesheet
 
    return (
      <SafeAreaView style={styles.safeArea}>

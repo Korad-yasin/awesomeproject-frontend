@@ -3,8 +3,6 @@
 import React, { useState, useContext } from 'react';
 import { View, StyleSheet, ActivityIndicator, SafeAreaView} from 'react-native';
 import SetupContext from '../SetupContext'; 
-import { API_URL } from '../config';
-import auth from '@react-native-firebase/auth';
 import { useDispatch, useSelector } from 'react-redux'; 
 import { setLoggedInUser } from '../redux/actions/userActions'; 
 import useFonts from '../hooks/useFonts';
@@ -15,6 +13,10 @@ import NextButton from '../reusable/button';
 import ClickableText from '../reusable/clickableText';
 import ErrorMessage from '../reusable/errorMessage';
 import ScreenTitle from '../reusable/ScreenTitle';
+
+import { registerUser, updateUserData } from '../services/authService';
+
+
 
 const RegistrationScreen = ({ navigation }) => {
   const { setUserId } = useContext(SetupContext); // Add this line
@@ -43,14 +45,8 @@ const RegistrationScreen = ({ navigation }) => {
       if (name !== loggedInUser.name) {
         console.log("Updating user's name in the database...");
         try {
-          const response = await fetch(`${API_URL}/store-user-data`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ uid: loggedInUser.id, name, email }),
-          });
+          const data = await updateUserData(loggedInUser.id, name, email);
           dispatch(setLoggedInUser({...loggedInUser, name}));
-          if (!response.ok) throw new Error("Failed to update user's name");
-          console.log("User's name updated successfully.");
           // Optionally, refresh logged-in user info in your state here
         } catch (error) {
           console.error("Error updating user's name:", error);
@@ -69,53 +65,42 @@ const RegistrationScreen = ({ navigation }) => {
     setShowError(false);
 
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        console.log('User registered with Firebase');
-
-        // Store additional user data
-        const uid = user.uid;
-        const response = await fetch(`${API_URL}/store-user-data`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ uid, name, email }),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            setUserId(data.id); // Setting the user ID in context
-            console.log("User data stored in our database");
-            // Dispatch the action to update the Redux store
-            dispatch(setLoggedInUser({
-              id: user.uid,  // Firebase UID
-              pgId: data.id,  // PostgresSQL ID
-              email: user.email,
-              name: name,
-            }));
-            navigation.navigate('birthdate');
-          } else {
-            console.error("Failed to store user data");
-          }
-        } catch (error) {
-          let message = "An unexpected error occurred. Please try again.";
-          switch (error.code) {
-           case 'auth/email-already-in-use':
-             message = "The email address is already in use by another account.";
-             break;
-           case 'auth/weak-password':
-             message = "The password is too weak. At least 6 characters must be used.";
-             break;
-           case 'auth/invalid-email':
-             message = "Please enter a valid email address.";
-             break;
-           default:
-             console.error("Firebase registration failed:", error);
-          }
-          setErrorMessage(message);
-          setShowError(true);
-        }      
+      const userData = await registerUser(email, password, name);
+      setUserId(userData.id);
+      console.log("User Data returned to RegistrationScreen:", userData);
+      // Handle user data and navigation after successful registration
+      dispatch(setLoggedInUser({
+        id: userData.uid,
+        pgId: userData.pgId,
+        email: userData.email,
+        name: name,
+      }));
+      navigation.navigate('birthdate');
+    } catch (error) {
+      let message = "An unexpected error occurred. Please try again.";
+      if (error.code) { // Check if error code exists to determine if it's a Firebase auth error
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            message = "The email address is already in use by another account.";
+            break;
+          case 'auth/weak-password':
+            message = "The password is too weak. At least 6 characters must be used.";
+            break;
+          case 'auth/invalid-email':
+            message = "Please enter a valid email address.";
+            break;
+          default:
+            console.error("Firebase registration failed:", error);
+        }
+      } else {
+        console.error("API call failed:", error);
+      }
+      setErrorMessage(message);
+      setShowError(true);
+    }    
   };
+
+  // return and stylesheet
 
   // return and stylesheet
 
